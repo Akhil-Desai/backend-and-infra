@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}My Blog{% endblock %}</title>
+</head>
+<body>
+  <header>
+    <h1>Welcome to My Blog</h1>
+    <nav>
+      <a href="{% url 'article_url' %}">Create Article</a>
+      <a href="{% url 'show_url' %}">View Articles</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

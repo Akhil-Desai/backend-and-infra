@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>Article List</h2>
+  <ul>
+    {% for article in obj %}
+      <li><strong>{{ obj.title }}</strong> - {{ obj.content }}</li>
+    {% empty %}
+      <li>No articles available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
