@@ -4,9 +4,30 @@
   <h2>Article List</h2>
   <ul>
     {% for article in obj %}
-      <li><strong>{{ obj.title }}</strong> - {{ obj.content }}</li>
-    {% empty %}
-      <li>No articles available.</li>
+    <li>
+        <strong>{{ article.title }}</strong> - {{ article.content }}
+        <div>
+            <form action="{% url 'delete_url' article.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <form action="{% url 'update_url' article.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </li>
     {% endfor %}
+
+    <h3>Top 3 Articles</h3>
+    <ul>
+      {% for top in t3 %}
+      <li>
+          <strong>{{ top.title }}</strong>
+      </li>
+      {% empty %}
+        <li>No articles available.</li>
+      {% endfor %}
+    </ul>
   </ul>
 {% endblock %}
