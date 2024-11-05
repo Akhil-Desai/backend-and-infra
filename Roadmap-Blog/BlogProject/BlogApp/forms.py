@@ -7,3 +7,5 @@ class ArticleForm(forms.ModelForm):
         model = Article
         fields = '__all__'
 
+class SearchForm(forms.ModelForm):
+    query = forms.CharField(label="Search", max_length=100)

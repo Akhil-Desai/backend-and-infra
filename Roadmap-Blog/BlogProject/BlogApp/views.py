@@ -1,5 +1,5 @@
 from .models import Article
-from .forms import ArticleForm
+from .forms import ArticleForm,SearchForm
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -53,3 +53,15 @@ def showArticleView(request):
                "t3": t3
                }
     return render(request, template_name, context)
+
+def searchView(request):
+    form = SearchForm()
+    results = []
+    query = ""
+
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Article.objects.filter(title__icontains=query)  # Adjust field name as needed
+    return render(request, 'search.html', {'form': form, 'results': results, 'query': query})

@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from BlogApp.views import showArticleView, createArticleView,deleteArticleView,updateArticleView
+from BlogApp.views import showArticleView, createArticleView,deleteArticleView,updateArticleView,searchView
 
 urlpatterns = [
     path("", createArticleView, name="article_url"),
     path("show/", showArticleView, name="show_url"),
     path('del/<int:f_uid>', deleteArticleView, name='delete_url'),
-    path('up/<int:f_uid>', updateArticleView, name="update_url" )
+    path('up/<int:f_uid>', updateArticleView, name="update_url" ),
+    path('')
 ]
