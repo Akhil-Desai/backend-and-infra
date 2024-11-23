@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Search Articles</h1>
+
+<form method="get" action="{% url 'search_url' %}">
+    <label for="query">Search:</label>
+    <input type="text" name="query" maxlength="100" required>
+    <button type="submit">Search</button>
+</form>
+
+{% if query %}
+    <h2>Results for "{{ query }}":</h2>
+    {% if results %}
+        <ul>
+            {% for result in results %}
+                <li>{{ result.title }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results</p>
+    {% endif %}
+{% endif %}
+{% endblock %}
+

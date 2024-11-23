@@ -22,5 +22,5 @@ urlpatterns = [
     path("show/", showArticleView, name="show_url"),
     path('del/<int:f_uid>', deleteArticleView, name='delete_url'),
     path('up/<int:f_uid>', updateArticleView, name="update_url" ),
-    path('')
+    path('search/', searchView, name='search_url')
 ]

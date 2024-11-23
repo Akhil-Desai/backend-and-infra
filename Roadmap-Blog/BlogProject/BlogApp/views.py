@@ -64,4 +64,4 @@ def searchView(request):
         if form.is_valid():
             query = form.cleaned_data['query']
             results = Article.objects.filter(title__icontains=query)  # Adjust field name as needed
-    return render(request, 'search.html', {'form': form, 'results': results, 'query': query})
+    return render(request, 'BlogApp/Search_form.html', {'form': form, 'results': results, 'query': query})
