@@ -1,15 +1,10 @@
 from fastapi import FastAPI
 from db import get_db
-from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 
 from routes.user import router as user_router
 
 app = FastAPI()
-OAuth2 = OAuth2PasswordBearer(tokenUrl="token")
-
-
-
 
 app.include_router(user_router,prefix="/users/v1", tags=["users"])
 
