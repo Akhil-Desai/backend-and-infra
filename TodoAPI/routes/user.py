@@ -10,7 +10,7 @@ router = APIRouter()
 def createUser(user: User, db=Depends(get_db)):
     userCollection = db["users"]
     try:
-        user["password"] = hashPassword(user.password)
+        user.password = hashPassword(user.password)
         userDict = user.model_dump()
         result = userCollection.insert_one(userDict)
         return {"message": "Sucessfully created user", "id": str(result.inserted_id)}
