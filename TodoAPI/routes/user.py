@@ -11,7 +11,7 @@ router = APIRouter()
 def createUser(user: User, db=Depends(get_db)):
     userCollection = db["users"]
     try:
-        existing_user = userCollection.find_one({"username": user.userName})
+        existing_user = userCollection.find_one({"userName": user.userName})
         if existing_user:
             return HTTPException(status_code=400, detail="Username already exist.")
 
@@ -26,11 +26,10 @@ def createUser(user: User, db=Depends(get_db)):
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get_db)):
     userCollection = db["users"]
     try:
-        findUser = userCollection.find_one({"username": form_data.username})
-        if not findUser or not verifyPassword(form_data.password, findUser.password):
+        findUser = userCollection.find_one({"userName": form_data.username})
+        if not findUser or not verifyPassword(findUser["password"],form_data.password):
             return HTTPException(status_code=400, detail="Username or password is incorrect")
 
         return {"access_token": "TestToken123", "token_type": "bearer"}
-
     except Exception as e:
         return HTTPException(status_code=500, detail=str(e))
