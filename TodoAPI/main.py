@@ -3,10 +3,12 @@ from db import get_db
 from typing import Annotated
 
 from routes.user import router as user_router
+from routes.todos import router as todo_router
 
 app = FastAPI()
 
 app.include_router(user_router,prefix="/users/v1", tags=["users"])
+app.include_router(todo_router, prefix="/todos/v1", tags=["todos"])
 
 
 
