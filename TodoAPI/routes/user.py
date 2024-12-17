@@ -30,6 +30,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get
         if not findUser or not verifyPassword(findUser["password"],form_data.password):
             return HTTPException(status_code=400, detail="Username or password is incorrect")
 
-        return {"access_token": "TestToken123", "token_type": "bearer"}
+        return {"access_token": "TestToken123#" + findUser["userName"], "token_type": "bearer"}
     except Exception as e:
         return HTTPException(status_code=500, detail=str(e))
