@@ -5,5 +5,5 @@ class Todo(BaseModel):
     task_id: int
     task: str
     due: str
-    user_id: int
+    userName: str
     is_done: bool = False

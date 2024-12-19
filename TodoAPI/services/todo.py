@@ -1,2 +1,3 @@
 def verifyToken(auth_token: str) -> bool:
-    return auth_token == "TestToken123"
+    token = auth_token.split('#')
+    return token[0] == "TestToken123"
