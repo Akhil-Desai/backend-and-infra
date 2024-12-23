@@ -59,7 +59,6 @@ async def deleteTodo(request: Request, todo_id: int, db=Depends(get_db)):
         return HTTPException(status_code=500, detail=str(e))
 
 
-#? Note: Add pagination for retrieval of Todo items
 @router.get("/myTodos")
 async def getTodos(request: Request, db = Depends(get_db), skip: int = Query(0, ge=0), limit: int = Query(0, ge=1, le=100)):
     todoCollection = db["todos"]

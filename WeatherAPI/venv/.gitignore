@@ -1,0 +1,10 @@
+# Ignore the .env file to keep it out of version control
+.env
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment directories
+env/
+.env
