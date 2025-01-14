@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from routes.weather import router as router_weather
 
 
