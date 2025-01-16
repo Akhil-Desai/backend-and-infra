@@ -1,31 +1,26 @@
 from models.weather import Weather
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from dependencies import get_redis_client
-import redis
-import json
-
+import redis,json,requests,os
+from dotenv import load_dotenv
 
 router = APIRouter()
 
+load_dotenv()
+api_key = os.getenv("WEATHER_API_KEY")
 
 @router.get("/{location}", response_model=Weather)
 def weatherForLocation(location: str, cache: redis.Redis = Depends(get_redis_client)):
 
-    TEST_LOCATIONS = {
-        "London": {"date": "2025-02-01", "temperature": 40.6},
-        "Barcelona": {"date": "2025-02-01", "temperature": 55.6},
-    }
+    #TODO: Try hitting the cache first before making the API call
 
+    url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{location}?key={api_key}"
 
-    result = cache.get(location)
+    try:
+        results = requests.get(url)
 
-    if result:
-        print("Retrieved Cached result")
-        return Weather(**json.loads(result))
+    except:
+        return "Error" #TODO: Return error code, need to know structure/output of results
+    finally:
+        return results #TODO: Return neccesary data, and set data to cache
 
-
-    if location in TEST_LOCATIONS:
-        cache.set(location, json.dumps(TEST_LOCATIONS[location]))
-        return Weather(**(TEST_LOCATIONS[location]))
-
-    return HTTPException(status_code=400, detail="Location not found")
