@@ -21,3 +21,7 @@ def assign_user_id(db = Depends(get_db)):
     counter_collection.update_one({"flag": 1}, {'$inc': {"seq": 1}})
 
     return current_seq["seq"]
+
+db = get_db()
+db.expenses.create_index([("user_id", 1)])
+db.expenses.create_index([("username", "text")])
