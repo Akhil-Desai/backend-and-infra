@@ -2,6 +2,8 @@ from fastapi import APIRouter,Depends,HTTPException
 from db import get_db, assign_user_id
 from models.user_models import User
 from utils import hash_password, verify_password
+from datetime import datetime, timedelta
+import jwt
 
 
 router = APIRouter()
@@ -13,6 +15,10 @@ def sign_up(user: User, db = Depends(get_db)):
     hashed_password = hash_password(user.password)
 
     user_collection = db["users"]
+
+    if user_collection.find_one({"username": user.username}):
+        raise HTTPException(status_code=200, detail="Username already exist, please choose a different one")
+
     new_user = {"username": user.username, "password": hashed_password, "user_id": assign_user_id(db)}
     #try inserting a new user
     try:
@@ -31,10 +37,8 @@ def login(user: User, db= Depends(get_db)):
     retrieved_user =  user_collection.find_one({"username": user.username})
 
     if verify_password(user.password, retrieved_user["password"]):
-        #Return JWT Token to user
-        pass
+        encoded_jwt = jwt.encode({"sub": retrieved_user["user_id"], "exp": datetime.now() + timedelta(minutes=30) }, "secret", algorithm="HS256")
+        return {"message": "Successfully logged in", "TOKEN": encoded_jwt, "status_code": "200"}
 
     else:
-        raise HTTPException(200, detail="Wrong password!")
-
-    return {"message": "success"}
+        raise HTTPException(400, detail="Wrong password!")

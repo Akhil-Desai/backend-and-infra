@@ -4,4 +4,4 @@ class Expense(BaseModel):
     type: str
     amount: float
     date: str
-    user_id: int #Foreign Key
+    user_id: int = None #Foreign Key
