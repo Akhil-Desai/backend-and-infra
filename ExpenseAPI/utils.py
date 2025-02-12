@@ -18,16 +18,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 #-----------------------------
 #* Authenticate JWT Token
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/v1/login")
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token):
     try:
         payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        #JWT library validates exp internally no need to do it here
         user_id = payload.get("sub")
-        expiration = payload.get("exp")
-        if user_id is None or expiration > datetime.now():
-            raise HTTPException(400, detail="Invalid Token")
-
     except jwt.PyJWTError as e:
         raise HTTPException(401, detail=str(e))
 

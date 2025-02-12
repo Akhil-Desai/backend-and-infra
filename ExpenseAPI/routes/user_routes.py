@@ -37,7 +37,8 @@ def login(user: User, db= Depends(get_db)):
     retrieved_user =  user_collection.find_one({"username": user.username})
 
     if verify_password(user.password, retrieved_user["password"]):
-        encoded_jwt = jwt.encode({"sub": retrieved_user["user_id"], "exp": datetime.now() + timedelta(minutes=30) }, "secret", algorithm="HS256")
+        print(datetime.now() + timedelta(minutes=30))
+        encoded_jwt = jwt.encode({"sub": str(retrieved_user["user_id"]), "exp": datetime.utcnow() + timedelta(minutes=30)}, "secret", algorithm="HS256")
         return {"message": "Successfully logged in", "TOKEN": encoded_jwt, "status_code": "200"}
 
     else:
