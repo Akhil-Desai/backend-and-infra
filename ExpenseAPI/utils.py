@@ -18,7 +18,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 #-----------------------------
 #* Authenticate JWT Token
-def get_current_user(token):
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/v1/login")
+def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, "secret", algorithms=["HS256"])
         #JWT library validates exp internally no need to do it here

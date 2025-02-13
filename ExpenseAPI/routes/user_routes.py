@@ -1,4 +1,5 @@
 from fastapi import APIRouter,Depends,HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from db import get_db, assign_user_id
 from models.user_models import User
 from utils import hash_password, verify_password
@@ -30,16 +31,17 @@ def sign_up(user: User, db = Depends(get_db)):
     return {"message": "new user created", "status code": "200"}
 
 @router.post("/login")
-def login(user: User, db= Depends(get_db)):
+def login(user: OAuth2PasswordRequestForm = Depends(), db= Depends(get_db)):
 
     user_collection = db["users"]
 
     retrieved_user =  user_collection.find_one({"username": user.username})
 
-    if verify_password(user.password, retrieved_user["password"]):
+
+    if retrieved_user and verify_password(user.password, retrieved_user["password"]):
         print(datetime.now() + timedelta(minutes=30))
         encoded_jwt = jwt.encode({"sub": str(retrieved_user["user_id"]), "exp": datetime.utcnow() + timedelta(minutes=30)}, "secret", algorithm="HS256")
-        return {"message": "Successfully logged in", "TOKEN": encoded_jwt, "status_code": "200"}
+        return {"access_token": encoded_jwt, "token_type": "bearer"}
 
     else:
         raise HTTPException(400, detail="Wrong password!")
