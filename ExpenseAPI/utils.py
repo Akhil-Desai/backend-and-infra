@@ -6,7 +6,6 @@ import jwt
 
 
 #*Password Authentication
-
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
@@ -22,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/v1/login")
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, "secret", algorithms=["HS256"])
-        #JWT library validates exp internally no need to do it here
+        #JWT library (jwt.decode) validates "exp" already no need to implement
         user_id = payload.get("sub")
     except jwt.PyJWTError as e:
         raise HTTPException(401, detail=str(e))

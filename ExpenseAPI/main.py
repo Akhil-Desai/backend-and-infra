@@ -6,7 +6,7 @@ from routes.expenses_routes import router as expense_router
 app = FastAPI()
 
 app.include_router(user_router, prefix="/user/v1")
-app.include_router(expense_router, prefix="/expense/v1")
+app.include_router(expense_router, prefix="/expenses/v1")
 
 
 @app.get("/db-health")

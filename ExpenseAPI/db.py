@@ -9,7 +9,7 @@ def get_db():
     db = client.get_database("Expenses")
     return db
 
-def assign_user_id(db = Depends(get_db)):
+def assign_id(db = Depends(get_db)):
     counter_collection = db["counter"]
 
     current_seq = counter_collection.find_one({"flag": 1})
@@ -22,6 +22,8 @@ def assign_user_id(db = Depends(get_db)):
 
     return current_seq["seq"]
 
+
 db = get_db()
 db.expenses.create_index([("user_id", 1)])
+# db.expenses.create_index(["expense_id", 1])
 db.expenses.create_index([("username", "text")])

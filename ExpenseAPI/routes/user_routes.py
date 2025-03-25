@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends,HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from db import get_db, assign_user_id
+from db import get_db, assign_id
 from models.user_models import User
 from utils import hash_password, verify_password
 from datetime import datetime, timedelta
@@ -20,7 +20,7 @@ def sign_up(user: User, db = Depends(get_db)):
     if user_collection.find_one({"username": user.username}):
         raise HTTPException(status_code=200, detail="Username already exist, please choose a different one")
 
-    new_user = {"username": user.username, "password": hashed_password, "user_id": assign_user_id(db)}
+    new_user = {"username": user.username, "password": hashed_password, "user_id": assign_id(db)}
     #try inserting a new user
     try:
         user_collection.insert_one(new_user)
