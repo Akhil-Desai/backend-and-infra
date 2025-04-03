@@ -39,7 +39,6 @@ def login(user: OAuth2PasswordRequestForm = Depends(), db= Depends(get_db)):
 
 
     if retrieved_user and verify_password(user.password, retrieved_user["password"]):
-        print(datetime.now() + timedelta(minutes=30))
         encoded_jwt = jwt.encode({"sub": str(retrieved_user["user_id"]), "exp": datetime.utcnow() + timedelta(minutes=30)}, "secret", algorithm="HS256")
         return {"access_token": encoded_jwt, "token_type": "bearer"}
 
