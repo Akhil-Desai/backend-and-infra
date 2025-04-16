@@ -1,0 +1,7 @@
+#.env
+.env
+
+#Python Cache files
+__pycache__
+*/__pycache__
+.pytest_cache
