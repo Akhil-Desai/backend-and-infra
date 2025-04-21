@@ -1,3 +1,8 @@
 1. Set up testing environment
     a. Connecting to postgresql
     b. Make sure migration table is set up properly
+
+2. Start on Migration Runner
+    a. Need to filter for migrations that are already applied vs not applied
+        i. Checking Version Numbers and making sure checksums haven't changed
+    b. Apply SQL in migration files to database 
