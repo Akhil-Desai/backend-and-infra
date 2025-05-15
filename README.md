@@ -1,6 +1,6 @@
 # 🚀 Backend Project Collection
 
-Welcome to the **Backend Project Collection** repository! This collection showcases hands-on backend projects that demonstrate core concepts in web and API development. Each project is designed to help you learn by building and experimenting. Dive in and explore!
+Welcome to the **Backend and Infra Collection** repository! This collection showcases backend and infra projects that demonstrate core concepts. Each project is designed to help me learn by building and experimenting. Dive in and explore!
 
 ---
 
