@@ -1,0 +1,56 @@
+Project: GraphQL Cost Profiler
+
+Objective:
+Develop a Go-based tool to analyze, estimate, and enforce computational cost limits on incoming GraphQL queries, enhancing API reliability, security, and performance.
+
+---
+
+Functional Requirements:
+
+1. Query Parsing & Analysis
+   - Parse GraphQL queries, mutations, and subscriptions using a Go GraphQL library.
+   - Support parsing of fragments, variables, and inline fragments.
+   - Extract operation names and variables for context-aware analysis.
+
+2. Cost Model Configuration
+   - Allow assignment of static and dynamic cost values to schema fields and types.
+   - Support configuration via YAML/JSON file and/or Go code.
+   - Enable default cost values and per-field/type overrides.
+   - Allow cost multipliers for list fields and arguments (e.g., pagination).
+
+3. Cost Calculation Engine
+   - Traverse the GraphQL AST to compute total query cost.
+   - Account for nested fields, fragments, recursion, and query depth.
+   - Support custom cost calculation logic via user-defined hooks.
+   - Detect and handle circular references and excessive nesting.
+
+4. Enforcement & Integration
+   - Provide middleware for Go GraphQL servers (e.g., gqlgen, graphql-go).
+   - Reject, throttle, or log queries exceeding a configurable cost threshold.
+   - Return descriptive error messages for rejected queries.
+   - Allow per-user or per-role cost limits (optional).
+
+5. Reporting & Observability
+   - Log query cost, operation name, user info, and timestamp.
+   - Expose an HTTP endpoint for cost analysis and health checks.
+   - Optionally export metrics (e.g., Prometheus) for monitoring.
+
+6. Testing & Validation
+   - Include comprehensive unit and integration tests.
+   - Provide example queries, schemas, and expected cost outputs.
+   - Validate configuration files and schema annotations.
+
+7. Documentation
+   - Document configuration, usage, and integration steps.
+   - Provide code examples and best practices.
+   - Include troubleshooting and FAQ sections.
+
+---
+
+Non-Functional Requirements:
+
+- Performance: Minimal overhead on query execution (<10% latency increase).
+- Security: Prevent resource exhaustion and denial-of-service via cost enforcement.
+- Extensibility: Modular design for easy integration with different GraphQL servers and custom cost models.
+- Compatibility: Support for Go 1.20+ and major GraphQL libraries.
+- Usability: Clear error messages and configuration validation.

@@ -1,0 +1,9 @@
+1. Install a GQL parsing library
+
+2. Understand the parts of GQL query (i.e Fragements, variables)
+    -Fragment is like an object for a query it can define multiple fields
+        - If a fragment is presented must parse the fields within to assing a cost
+    -variables are things we can include in the query to search for certain things within
+        - Consider we might charge more or less for a query that provides variable/s
+
+3. Extract and Log the operation names and variables for each query
