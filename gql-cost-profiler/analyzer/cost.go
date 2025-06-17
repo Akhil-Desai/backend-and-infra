@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+
 func YAMLConfig(path string) (CostConfig, error){
-	return (nil, error)
+	return nil,nil
 }

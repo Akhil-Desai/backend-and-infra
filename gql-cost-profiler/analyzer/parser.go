@@ -40,9 +40,11 @@ func ParseGQLQuery(schema *ast.Schema, queryStr string) (*ast.QueryDocument, err
 	return query, nil
 }
 
-func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]QLNode) {
-	//For Each SelectionSet we encounter a Field which can contain another Field FragmentSpread and Inline Fragment
-	//We can then recurse on each Field,Fragment,and InlineFragment extracting the Variable and any Arguments used with that Variable
+func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]*QLNode) {
+	// Returns a Map Structured like
+	// { P_Type: *QLNode{
+	// 	field name, *Args[] [ {name, isVar, val } ]
+	//	}
 	nodes := make(map[string][]*QLNode)
 	visitedFragments := make(map[string]struct{})
 
@@ -64,7 +66,6 @@ func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]
 					newArgs = append(newArgs,
 						&Argument{
 						name: a.Name,
-						isVar: a.Value.Kind == ast.Variable,
 						val : a.Value.Raw,
 					})
 				}
@@ -103,4 +104,43 @@ func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]
 	}
 
 	return nodes
+}
+
+func applyCost(nodes map[string][]*QLNode, config map[string]map[string]map[string]interface{}) {
+	//TODO type switch arg could be an int or float64
+
+	dummyCost := float64(0)
+
+	for p_type,ql_nodes := range nodes{
+		fmt.Println("Parent Type", p_type)
+
+		for _,node := range ql_nodes {
+
+			fmt.Println("Field name", node.f_name)
+			//Does our field exist in the config
+			fieldCfg,ok := config[p_type][node.f_name]
+			if !ok { continue }
+
+			base,ok := fieldCfg["base"].(float64)
+			if !ok { continue }
+
+			perItemArg,hasArg := fieldCfg["perItemArg"].(string)
+			if !hasArg { continue }
+
+			perItemCost,hasCost := fieldCfg["perItemCost"].(float64)
+			if !hasCost { continue }
+
+			for _,arg := range node.args {
+
+				fmt.Println("Argument object", arg)
+				if arg.name == perItemArg {
+					base += arg.val.(float64) * perItemCost
+				}
+
+			}
+			dummyCost += base
+		}
+
+	}
+
 }
