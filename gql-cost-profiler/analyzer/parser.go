@@ -2,6 +2,7 @@ package analyzer
 
 import (
 	"fmt"
+	"strconv"
 	"github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/validator"
@@ -107,9 +108,8 @@ func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]
 }
 
 func applyCost(nodes map[string][]*QLNode, config map[string]map[string]map[string]interface{}) {
-	//TODO type switch arg could be an int or float64
 
-	dummyCost := float64(0)
+	cost := float64(0)
 
 	for p_type,ql_nodes := range nodes{
 		fmt.Println("Parent Type", p_type)
@@ -121,26 +121,69 @@ func applyCost(nodes map[string][]*QLNode, config map[string]map[string]map[stri
 			fieldCfg,ok := config[p_type][node.f_name]
 			if !ok { continue }
 
-			base,ok := fieldCfg["base"].(float64)
-			if !ok { continue }
+			base := float64(0)
+			switch t := fieldCfg["base"].(type) {
+			case string:
+				 newBase,err := strconv.ParseFloat(t,64)
+				 if err != nil {
+					return
+				}
+				base = newBase
+			case int:
+				newBase := float64(t)
+				base = newBase
+			case float64:
+				base = t
+
+			default:
+				return
+			}
+			cost += base
 
 			perItemArg,hasArg := fieldCfg["perItemArg"].(string)
 			if !hasArg { continue }
 
-			perItemCost,hasCost := fieldCfg["perItemCost"].(float64)
-			if !hasCost { continue }
+			perItemCost := float64(0)
+			switch t := fieldCfg["perItemCost"].(type) {
+			case string:
+				 newPIC,err := strconv.ParseFloat(t,64)
+				 if err != nil {
+					return
+				}
+				perItemCost = newPIC
+			case int:
+				newPIC:= float64(t)
+				perItemCost = newPIC
+			case float64:
+				perItemCost = t
+			default:
+				return
+			}
 
 			for _,arg := range node.args {
 
 				fmt.Println("Argument object", arg)
 				if arg.name == perItemArg {
-					base += arg.val.(float64) * perItemCost
+
+					argVal := float64(0)
+					switch t := arg.val.(type) {
+					case string:
+						newAV,err := strconv.ParseFloat(t,64)
+						if err != nil {
+							return
+						}
+						argVal = newAV
+					case int:
+						newAV := float64(t)
+						argVal = newAV
+					case float64:
+						argVal = t
+					default:
+						return
+					}
+					cost += (argVal * perItemCost)
 				}
-
 			}
-			dummyCost += base
 		}
-
 	}
-
 }
