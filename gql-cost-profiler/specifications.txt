@@ -21,8 +21,6 @@ Functional Requirements:
 3. Cost Calculation Engine
    - Traverse the GraphQL AST to compute total query cost.
    - Account for nested fields, fragments, recursion, and query depth.
-   - Support custom cost calculation logic via user-defined hooks.
-   - Detect and handle circular references and excessive nesting.
 
 4. Enforcement & Integration
    - Provide middleware for Go GraphQL servers (e.g., gqlgen, graphql-go).
