@@ -1,1 +1,1 @@
-Next: Refactor code to follow Go standards and be more idiomatic
+Today: Create Config Schema so it can be validated
