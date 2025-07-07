@@ -16,9 +16,11 @@ jobs:
       - name: Build
         run: |
           echo "Building 🔨" 
-          go build ./gql-cost-profiler/main.go
+          cd gql-cost-profiler
+          go build ./main.go
 
       - name: Test
         run: | 
           echo "Running test... 🧑‍🔬" 
-          go test ./gql-cost-profiler/test
+          cd gql-cost-profiler
+          go test ./test
