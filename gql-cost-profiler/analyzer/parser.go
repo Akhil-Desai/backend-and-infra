@@ -11,40 +11,42 @@ import (
 
 
 type Node struct {
-	fieldName string
-	fieldArguments   []*FieldArgument
+	FieldName string
+	FieldArguments   []*FieldArgument
 }
 type FieldArgument struct {
-	name string
-	value interface{}
+	Name string
+	Value interface{}
 }
 
 
-func parseGQLSchema(schemaStr string) (*ast.Schema, error) {
+func ParseGQLSchema(schemaStr string) (*ast.Schema, error) {
 	schema,err := gqlparser.LoadSchema(&ast.Source{Name: "schema.graphql", Input: schemaStr})
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse schmea: %w 💥", err)
+		return nil, fmt.Errorf("failed to parse schmea: %w 💥", err)
 	}
 	return schema, nil
 }
 
-func parseGQLQuery(schema *ast.Schema, queryStr string) (*ast.QueryDocument, error) {
+func ParseGQLQuery(schema *ast.Schema, queryStr string) (*ast.QueryDocument, error) {
 	query, err := gqlparser.LoadQuery(schema, queryStr)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse query: %w 💥", err)
+		return nil, fmt.Errorf("failed to parse query: %w 💥", err)
 	}
 	errs := validator.Validate(schema, query)
 	if len(errs) > 0 {
-		return nil, fmt.Errorf("Query validaton errors: %v 💥", errs)
+		return nil, fmt.Errorf("query validaton errors: %v 💥", errs)
 	}
 	return query, nil
 }
 
-func extractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]*Node) {
+func ExtractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]*Node) {
 	// Returns a Map Structured like
 	// { P_Type: *Node{
-	// 	field name, *Args[] [ {name, val } ]
-	//	}
+	// 			field name,
+	// 			field arguments
+	//		}
+	// }
 	nodes := make(map[string][]*Node)
 	visitedFragments := make(map[string]struct{})
 
@@ -66,11 +68,11 @@ func extractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]
 				for _,arg := range s.Arguments {
 					newFieldArgs = append(newFieldArgs,
 						&FieldArgument{
-						name: arg.Name,
-						value : arg.Value.Raw,
+						Name: arg.Name,
+						Value : arg.Value.Raw,
 					})
 				}
-				nodes[parentType] = append(nodes[parentType], &Node{fieldName: s.Name, fieldArguments: newFieldArgs})
+				nodes[parentType] = append(nodes[parentType], &Node{FieldName: s.Name, FieldArguments: newFieldArgs})
 
 				walkSelections(s.SelectionSet, fieldDef.Type.Name())
 
@@ -100,8 +102,9 @@ func extractQueryNodes(doc *ast.QueryDocument, schema *ast.Schema)(map[string][]
 		case ast.Subscription:
 			rootType = "Subscription"
 
-		walkSelections(op.SelectionSet, rootType)
 		}
+
+		walkSelections(op.SelectionSet, rootType)
 	}
 
 	return nodes
@@ -115,7 +118,7 @@ func applyCost(nodes map[string][]*Node, config map[string]map[string]map[string
 
 		for _,node := range nodes {
 
-			fieldCfg,ok := config[parentType][node.fieldName]
+			fieldCfg,ok := config[parentType][node.FieldName]
 			if !ok { continue }
 
 			baseCost,err := convertToFloat64(fieldCfg["base"])
@@ -128,11 +131,11 @@ func applyCost(nodes map[string][]*Node, config map[string]map[string]map[string
 			perItemCost,err := convertToFloat64(fieldCfg["perItemCost"])
 			if err != nil { return float64(-1) ,fmt.Errorf("%w", err) }
 
-			for _,arg := range node.fieldArguments {
+			for _,arg := range node.FieldArguments {
 
-				if arg.name == perItemArg {
+				if arg.Name == perItemArg {
 
-					argVal,err := convertToFloat64(arg.value)
+					argVal,err := convertToFloat64(arg.Value)
 					if err != nil { return float64(-1) ,fmt.Errorf("%w", err) }
 					cost = (argVal * perItemCost) + cost
 
@@ -152,7 +155,7 @@ func convertToFloat64(value interface{}) (float64,error){
 	case string:
 		newValue, err := strconv.ParseFloat(t, 64)
 		if err != nil {
-			return float64(-1) , fmt.Errorf("Error converting type string to float64 for value... %w 💥", err)
+			return float64(-1) , fmt.Errorf("error converting type string to float64 for value... %w 💥", err)
 		}
 		return newValue,nil
 
@@ -164,6 +167,6 @@ func convertToFloat64(value interface{}) (float64,error){
 		return value.(float64),nil
 
 	default:
-		return float64(-1) , fmt.Errorf("Invalid type for converting to float64 for perItemCost... type was: %T 💥", t)
+		return float64(-1) , fmt.Errorf("invalid type for converting to float64 for perItemCost... type was: %T 💥", t)
 	}
 }
